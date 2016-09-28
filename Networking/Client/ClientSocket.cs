@@ -58,6 +58,8 @@ namespace ChatAweria.Networking.Client
 
             MessageHandler.PrintString(_buffer, bufLength);
 
+            _buffer = new byte[1024];
+            _socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, RecivedCallback, _socket);
         }
     }
 }

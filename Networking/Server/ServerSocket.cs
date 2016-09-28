@@ -57,7 +57,7 @@ namespace ChatAweria.Networking.Server
             handler.BeginSend(_buffer, 0, _buffer.Length, SocketFlags.None, SendCallback, handler);
 
             _buffer = new byte[1024];
-            handler.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, RecivedCallback, handler);
+            handler.BeginReceive(client.Buffer, 0, client.Buffer.Length, SocketFlags.None, RecivedCallback, handler);
             Accept();
         }
 
@@ -74,19 +74,21 @@ namespace ChatAweria.Networking.Server
             }
             else
             {
+                var client = _clients.FirstOrDefault(c => ReferenceEquals(c.IpEndPoint, handler.RemoteEndPoint));
+                if (client == null)
+                    Console.Write($"Client {handler.RemoteEndPoint} not found");
                 //Handle packet
                 //Print message on server
-                MessageHandler.PrintString(_buffer, bufferSize);
+                MessageHandler.PrintString(client.Buffer, bufferSize);
 
                 //Send to clients
                 foreach (var c in _clients)
                 {
-                    c.ClientSocket.SendTo(_buffer, 0, bufferSize, SocketFlags.None, c.IpEndPoint);
+                    c.ClientSocket.SendTo(client.Buffer, 0, bufferSize, SocketFlags.None, c.IpEndPoint);
                 }
 
-
-                _buffer = new byte[1024];
-                handler.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, RecivedCallback, handler);
+                client.Buffer = new byte[1024];
+                handler.BeginReceive(client.Buffer, 0, client.Buffer.Length, SocketFlags.None, RecivedCallback, handler);
                 _allDone.Set();
             }
 
