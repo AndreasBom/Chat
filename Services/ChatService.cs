@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Net.WebSockets;
-using System.Text;
-using System.Threading.Tasks;
-using ChatAweria.Networking.Client;
+﻿using ChatAweria.Networking.Client;
 using ChatAweria.Networking.Server;
+using System;
+using System.Net;
 
 namespace ChatAweria.Services
 {
@@ -46,11 +40,30 @@ namespace ChatAweria.Services
         {
             var client = new ClientSocket();
             client.Connect(ipAddress, port);
-
             while (true)
             {
-                var msg = Console.ReadLine();
-                client.SendAsync(msg);
+                if (client.IsConnected)
+                {
+                    var msg = Console.ReadLine();
+
+                    if (!msg.Contains("@"))
+                    {
+                        if (msg.ToLower() == "away")
+                        {
+                            client.SetClientAway();
+                        }
+                        if (msg.ToLower() == "online")
+                        {
+                            client.SetClientOnline();
+                        }
+
+
+                    }
+
+                    client.SendAsync(msg);
+
+                }
+
             }
         }
     }

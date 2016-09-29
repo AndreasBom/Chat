@@ -48,7 +48,7 @@
     <Compile Include="Networking\Abstract\NetworkingBase.cs" />
     <Compile Include="Networking\Client\ClientSocket.cs" />
     <Compile Include="Networking\Encoding\MessageHandler.cs" />
-    <Compile Include="Networking\Encoding\PacketHandler.cs" />
+    <Compile Include="Networking\Server\PacketHandler.cs" />
     <Compile Include="Networking\Server\ServerManager.cs" />
     <Compile Include="Networking\Server\ServerSocket.cs" />
     <Compile Include="Program.cs" />

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ChatAweria.Networking.Abstract;
+using ChatAweria.Networking.Encoding;
+using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using ChatAweria.Networking.Abstract;
-using ChatAweria.Networking.Encoding;
 
 namespace ChatAweria.Networking.Client
 {
@@ -14,6 +10,7 @@ namespace ChatAweria.Networking.Client
     {
         private Socket _socket;
         private byte[] _buffer = new byte[1024];
+        public bool IsConnected { get; set; } = false;
 
         public ClientSocket()
         {
@@ -31,6 +28,7 @@ namespace ChatAweria.Networking.Client
             SendAsync(packet, _socket);
         }
 
+
         private void ConnectCallback(IAsyncResult ar)
         {
             if (_socket.Connected)
@@ -40,7 +38,6 @@ namespace ChatAweria.Networking.Client
                 Console.WriteLine("Connected to Server");
                 _buffer = new byte[1024];
                 _socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, RecivedCallback, _socket);
-
                 //Handle packet
 
             }
@@ -48,6 +45,18 @@ namespace ChatAweria.Networking.Client
             {
                 Console.WriteLine("Could not connect to server");
             }
+        }
+
+        public void SetClientAway()
+        {
+            var packet = PacketHandler.GetPacket("away");
+            SendAsync(packet, _socket);
+        }
+
+        public void SetClientOnline()
+        {
+            var packet = PacketHandler.GetPacket("online");
+            SendAsync(packet, _socket);
         }
 
         protected override void RecivedCallback(IAsyncResult ar)
@@ -60,6 +69,9 @@ namespace ChatAweria.Networking.Client
 
             _buffer = new byte[1024];
             _socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, RecivedCallback, _socket);
+
+            IsConnected = true;
         }
+
     }
 }

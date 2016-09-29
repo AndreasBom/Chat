@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChatAweria.Models
 {
@@ -21,6 +16,7 @@ namespace ChatAweria.Models
         public string Name { get; set; }
         public Socket ClientSocket { get; set; }
         public byte[] Buffer { get; set; }
+        public bool Away { get; set; } = false;
 
         public ClientModel(Socket client)
         {

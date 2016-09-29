@@ -1,9 +1,7 @@
-﻿using System;
+﻿using ChatAweria.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ChatAweria.Models;
 
 namespace ChatAweria.Networking.Encoding
 {
@@ -11,11 +9,16 @@ namespace ChatAweria.Networking.Encoding
     {
         public static void PrintString(byte[] buffer, int packetLength)
         {
+            var msg = GetStringFromPacket(buffer, packetLength);
+            Console.WriteLine(msg);
+        }
+
+        public static string GetStringFromPacket(byte[] buffer, int packetLength)
+        {
             byte[] packet = new byte[packetLength];
             Array.Copy(buffer, packet, packet.Length);
 
-            var msg = System.Text.Encoding.UTF8.GetString(packet);
-            Console.WriteLine(msg);
+            return System.Text.Encoding.UTF8.GetString(packet);
         }
 
         public static string GetWelcomeMessage(ClientModel client, List<ClientModel> clients)
@@ -33,6 +36,20 @@ namespace ChatAweria.Networking.Encoding
             }
 
             return $"Welcome {client.Name}. You have port: {client.Port} \nYou are all alone in here";
+        }
+
+        public static Tuple<string[], string> ExtracyInput(string input)
+        {
+            var senderMessage = input.Split('@');
+            var senders = senderMessage[0].Split(',');
+            var returnVal = Tuple.Create<string[], string>(senders, senderMessage[1]);
+
+            return returnVal;
+        }
+
+        public static string GetNewClientJoinedMessage(ClientModel client)
+        {
+            return $"{client.Name} joined the chat";
         }
     }
 }
