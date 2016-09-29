@@ -1,5 +1,5 @@
 ﻿using ChatAweria.Services;
-using System.Diagnostics;
+using System;
 using System.Net;
 
 namespace ChatAweria
@@ -14,16 +14,15 @@ namespace ChatAweria
         {
             IChatService chatService = new ChatService();
 
-            //Start server
-            if (Process.GetProcessesByName("ChatAweria").Length == 0)
+            try
             {
                 chatService.StartServer();
             }
-            //Start client
-            else
+            catch (Exception)
             {
                 chatService.StartAndConnectClient(IpAddress, Port);
             }
+
         }
     }
 }
