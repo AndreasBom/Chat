@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 
 namespace ChatAweria.Models
@@ -18,7 +20,7 @@ namespace ChatAweria.Models
         public byte[] Buffer { get; set; }
         public bool Away { get; set; } = false;
 
-        public ClientModel(Socket client)
+        public ClientModel(Socket client, IEnumerable<ClientModel> clients)
         {
             var c = client.RemoteEndPoint as IPEndPoint;
             _endPoint = c;
@@ -28,7 +30,11 @@ namespace ChatAweria.Models
                 Port = c.Port;
                 Buffer = new byte[1024];
 
-                Name = GenerateName();
+                do
+                {
+                    Name = GenerateName();
+                } while (clients.Any(n => n.Name == Name));
+
                 ClientSocket = client;
             }
         }

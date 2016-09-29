@@ -1,4 +1,5 @@
-﻿using ChatAweria.Networking.Client;
+﻿using ChatAweria.Networking.Abstract;
+using ChatAweria.Networking.Client;
 using ChatAweria.Networking.Server;
 using System;
 using System.Net;
@@ -6,16 +7,23 @@ using System.Net;
 namespace ChatAweria.Services
 {
 
-    public class ChatService
+    public class ChatService : IChatService
     {
-        private readonly ServerSocket _serverSocket;
-        private readonly ClientSocket _clientSocket;
+        private readonly IServerSocket _serverSocket;
+        private readonly IClientSocket _clientSocket;
 
 
         public ChatService()
         {
             _serverSocket = new ServerSocket();
         }
+
+        public ChatService(IServerSocket serverSocket, IClientSocket clientSocket)
+        {
+            _serverSocket = serverSocket;
+            _clientSocket = clientSocket;
+        }
+
 
         public ChatService(ServerSocket serverSocket, ClientSocket clientSocket)
         {

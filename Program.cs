@@ -12,7 +12,7 @@ namespace ChatAweria
 
         public static void Main(string[] args)
         {
-            var chatService = new ChatService();
+            IChatService chatService = new ChatService();
             var noOfInstances = Process.GetProcessesByName("ChatAweria").Length;
 
             //Start server

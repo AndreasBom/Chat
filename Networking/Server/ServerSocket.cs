@@ -9,7 +9,7 @@ using System.Net.Sockets;
 
 namespace ChatAweria.Networking.Server
 {
-    public class ServerSocket : NetworkingBase
+    public class ServerSocket : NetworkingBase, IServerSocket
     {
         private readonly Socket _socket;
         private byte[] _buffer = new byte[1024];
@@ -44,13 +44,13 @@ namespace ChatAweria.Networking.Server
             _buffer = new byte[1024];
 
             //creates a new ClientModel
-            var client = new ClientModel(handler);
+            var client = new ClientModel(handler, _clients);
 
             // adds the ClientModel to a lists of clients
             _clients.Add(client);
 
             var welcomeMessage = MessageHandler.GetWelcomeMessage(client, _clients);
-            _buffer = PacketHandler.GetPacket(welcomeMessage);
+            _buffer = PacketHandler.GetPacketFromString(welcomeMessage);
 
             //Send welcome message
             handler.BeginSend(_buffer, 0, _buffer.Length, SocketFlags.None, SendCallback, handler);
@@ -70,13 +70,13 @@ namespace ChatAweria.Networking.Server
             {
                 if (c.IpEndPoint != client.IpEndPoint)
                 {
-                    c.ClientSocket.SendTo(PacketHandler.GetPacket(newClientMsg), 0, PacketHandler.GetPacket(newClientMsg).Length, SocketFlags.None, c.IpEndPoint);
+                    c.ClientSocket.SendTo(PacketHandler.GetPacketFromString(newClientMsg), 0, PacketHandler.GetPacketFromString(newClientMsg).Length, SocketFlags.None, c.IpEndPoint);
                 }
 
             }
         }
 
-        protected override void RecivedCallback(IAsyncResult ar)
+        public override void RecivedCallback(IAsyncResult ar)
         {
             var listener = (Socket)ar.AsyncState;
             var handler = listener;
@@ -86,7 +86,8 @@ namespace ChatAweria.Networking.Server
             var client = _clients.FirstOrDefault(c => ReferenceEquals(c.IpEndPoint, handler.RemoteEndPoint));
             if (se != SocketError.Success)
             {
-                Console.WriteLine($"Socket Recive Error. {client.Name} left the chat");
+                Console.WriteLine($"{client.Name} left the chat");
+                //Notify clients that a client left the chat
                 ClientLeftChat(client);
             }
             else
@@ -167,7 +168,7 @@ namespace ChatAweria.Networking.Server
             {
                 if (!ReferenceEquals(c.IpEndPoint, client.IpEndPoint) && c.Away == false)
                 {
-                    c.ClientSocket.SendTo(PacketHandler.GetPacket(msg), 0, PacketHandler.GetPacket(msg).Length, SocketFlags.None, c.IpEndPoint);
+                    c.ClientSocket.SendTo(PacketHandler.GetPacketFromString(msg), 0, PacketHandler.GetPacketFromString(msg).Length, SocketFlags.None, c.IpEndPoint);
                 }
             }
         }
@@ -176,7 +177,7 @@ namespace ChatAweria.Networking.Server
         {
             var clients = from r in recipietantsList
                           from c in _clients
-                          where r == c.Name && c.Away == false
+                          where string.Equals(r.Trim(), c.Name, StringComparison.CurrentCultureIgnoreCase) && c.Away == false
                           select c;
             return clients;
         }

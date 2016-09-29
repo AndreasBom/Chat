@@ -20,6 +20,6 @@ namespace ChatAweria.Networking.Abstract
             _allDone.Set();
         }
 
-        protected abstract void RecivedCallback(IAsyncResult ar);
+        public abstract void RecivedCallback(IAsyncResult ar);
     }
 }

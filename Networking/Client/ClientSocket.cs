@@ -6,9 +6,9 @@ using System.Net.Sockets;
 
 namespace ChatAweria.Networking.Client
 {
-    public class ClientSocket : NetworkingBase
+    public class ClientSocket : NetworkingBase, IClientSocket
     {
-        private Socket _socket;
+        private readonly Socket _socket;
         private byte[] _buffer = new byte[1024];
         public bool IsConnected { get; set; } = false;
 
@@ -24,7 +24,7 @@ namespace ChatAweria.Networking.Client
 
         public void SendAsync(string msg)
         {
-            var packet = PacketHandler.GetPacket(msg);
+            var packet = PacketHandler.GetPacketFromString(msg);
             SendAsync(packet, _socket);
         }
 
@@ -49,17 +49,17 @@ namespace ChatAweria.Networking.Client
 
         public void SetClientAway()
         {
-            var packet = PacketHandler.GetPacket("away");
+            var packet = PacketHandler.GetPacketFromString("away");
             SendAsync(packet, _socket);
         }
 
         public void SetClientOnline()
         {
-            var packet = PacketHandler.GetPacket("online");
+            var packet = PacketHandler.GetPacketFromString("online");
             SendAsync(packet, _socket);
         }
 
-        protected override void RecivedCallback(IAsyncResult ar)
+        public override void RecivedCallback(IAsyncResult ar)
         {
             var state = (Socket)ar.AsyncState;
             var handler = state;

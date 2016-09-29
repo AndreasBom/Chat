@@ -47,13 +47,15 @@
     <Compile Include="Models\ClientModel.cs" />
     <Compile Include="Networking\Abstract\NetworkingBase.cs" />
     <Compile Include="Networking\Client\ClientSocket.cs" />
+    <Compile Include="Networking\Abstract\IClientSocket.cs" />
     <Compile Include="Networking\Encoding\MessageHandler.cs" />
-    <Compile Include="Networking\Server\PacketHandler.cs" />
-    <Compile Include="Networking\Server\ServerManager.cs" />
+    <Compile Include="Networking\Encoding\PacketHandler.cs" />
+    <Compile Include="Networking\Abstract\IServerSocket.cs" />
     <Compile Include="Networking\Server\ServerSocket.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ChatService.cs" />
+    <Compile Include="Services\IChatService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
