@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ChatAweria.Networking.Abstract;
+using ChatAweria.Networking.Encoding;
+using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using ChatAweria.Networking.Abstract;
-using ChatAweria.Networking.Encoding;
 
 namespace ChatAweria.Networking.Client
 {
-    public class ClientSocket : NetworkingBase
+    public class ClientSocket : NetworkingBase, IClientSocket
     {
-        private Socket _socket;
+        private readonly Socket _socket;
         private byte[] _buffer = new byte[1024];
+        public bool IsConnected { get; set; } = false;
 
         public ClientSocket()
         {
@@ -27,9 +24,10 @@ namespace ChatAweria.Networking.Client
 
         public void SendAsync(string msg)
         {
-            var packet = PacketHandler.GetPacket(msg);
+            var packet = PacketHandler.GetPacketFromString(msg);
             SendAsync(packet, _socket);
         }
+
 
         private void ConnectCallback(IAsyncResult ar)
         {
@@ -40,7 +38,6 @@ namespace ChatAweria.Networking.Client
                 Console.WriteLine("Connected to Server");
                 _buffer = new byte[1024];
                 _socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, RecivedCallback, _socket);
-
                 //Handle packet
 
             }
@@ -50,7 +47,19 @@ namespace ChatAweria.Networking.Client
             }
         }
 
-        protected override void RecivedCallback(IAsyncResult ar)
+        public void SetClientAway()
+        {
+            var packet = PacketHandler.GetPacketFromString("away");
+            SendAsync(packet, _socket);
+        }
+
+        public void SetClientOnline()
+        {
+            var packet = PacketHandler.GetPacketFromString("online");
+            SendAsync(packet, _socket);
+        }
+
+        public override void RecivedCallback(IAsyncResult ar)
         {
             var state = (Socket)ar.AsyncState;
             var handler = state;
@@ -60,6 +69,9 @@ namespace ChatAweria.Networking.Client
 
             _buffer = new byte[1024];
             _socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, RecivedCallback, _socket);
+
+            IsConnected = true;
         }
+
     }
 }

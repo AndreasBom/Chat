@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using ChatAweria.Services;
+using System;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using ChatAweria.Services;
 
 namespace ChatAweria
 {
@@ -17,19 +12,17 @@ namespace ChatAweria
 
         public static void Main(string[] args)
         {
-            var chatService = new ChatService();
-            var noOfInstances = Process.GetProcessesByName("ChatAweria").Length;
+            IChatService chatService = new ChatService();
 
-            //Start server
-            if (noOfInstances == 0)
+            try
             {
                 chatService.StartServer();
             }
-            //Start client
-            else
+            catch (Exception)
             {
                 chatService.StartAndConnectClient(IpAddress, Port);
             }
+
         }
     }
 }
