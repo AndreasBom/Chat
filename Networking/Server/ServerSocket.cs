@@ -44,7 +44,7 @@ namespace ChatAweria.Networking.Server
             _buffer = new byte[1024];
 
             //creates a new ClientModel
-            var client = ServerManager.CreateClient(handler);
+            var client = new ClientModel(handler);
 
             // adds the ClientModel to a lists of clients
             _clients.Add(client);
