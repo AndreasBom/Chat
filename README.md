@@ -1,3 +1,4 @@
+https://ci.appveyor.com/api/projects/status/github/{AndreasBom/Chat}
 # ChatApp using sockets
    
 #####First running instance of the app will act as server. The following instances will act as clients.   
